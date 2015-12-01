@@ -9,6 +9,12 @@
                 {:row row, :col col, :visited? false,
                  :bottom? true, :right? true})))))
 
+(defn possible-neighbors [rooms row col]
+  [(get-in rooms [(- row 1) col])
+   (get-in rooms [(+ row 1) col])
+   (get-in rooms [row (- col 1)])
+   (get-in rooms [row (+ col 1)])])
+
 (defn -main [& args]
   (let [rooms (create-rooms)]
     ; print top walls
@@ -20,5 +26,6 @@
       ;print left walls
       (print "|")
       (doseq [room row]
-        (print "_|"))
+        (print (str (if (:bottom? room) "_" " ")
+                    (if (:right? room) "|" " "))))
       (println))))
