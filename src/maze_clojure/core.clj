@@ -6,7 +6,9 @@
 (defn create-rooms []
   (vec (for [row (range 0 size)]
          (vec (for [col (range 0 size)]
-                {:row row, :col col, :visited? false,
+                {:row row, :col col, :visited? false, :start? (if (and (= 0 row) (= 0 col))
+                                                                true
+                                                                false),
                  :bottom? true, :right? true})))))
 
 (defn possible-neighbors [rooms row col]
@@ -64,6 +66,10 @@
       ;print left walls
       (print "|")
       (doseq [room row]
-        (print (str (if (:bottom? room) "_" " ")
+        (print (str (cond
+                      (:start? room) "o"
+                      (:bottom? room) "_"
+                      :else " ")
                     (if (:right? room) "|" " "))))
       (println))))
+
