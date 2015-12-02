@@ -9,7 +9,7 @@
                 {:row row, :col col, :visited? false, :start? (if (and (= 0 row) (= 0 col))
                                                                 true
                                                                 false),
-                 :bottom? true, :right? true})))))
+                 :bottom? true, :right? true, :end? false})))))
 
 (defn possible-neighbors [rooms row col]
   [(get-in rooms [(- row 1) col])
@@ -42,6 +42,12 @@
     (> new-col old-col)
     (assoc-in rooms [old-row old-col :right?] false)))
 
+(defn set-end [rooms row col]
+  (let [filtered-rooms (filter :end? (flatten rooms))]
+    (if (pos? (count filtered-rooms))
+      rooms
+      (assoc-in rooms [row col :end?] true))))
+
 (defn create-maze [rooms row col]
   (let [rooms (assoc-in rooms [row col :visited?] true)
         next-room (random-neighbor rooms row col)]
@@ -52,7 +58,7 @@
             (if (= old-rooms new-rooms)
               old-rooms
               (recur new-rooms)))))
-      rooms)))
+      (set-end rooms row col))))
 
 (defn -main [& args]
   (let [rooms (create-rooms)
@@ -68,6 +74,7 @@
       (doseq [room row]
         (print (str (cond
                       (:start? room) "o"
+                      (:end? room) "x"
                       (:bottom? room) "_"
                       :else " ")
                     (if (:right? room) "|" " "))))
